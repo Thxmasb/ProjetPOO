@@ -76,53 +76,7 @@ public class Connexion implements ActionListener {
     }
 
     public void actionPerformed(ActionEvent event) {
-    	Object source = event.getSource();
-        //Se connecter
-    	 String csvFile = "/Users/thomasballotin/ProjetPOO/src/interfacegraphique/bdd_utilisateur.txt";
-         BufferedReader br = null;
-         String line = "";
-         String cvsSplitBy = ",";
-
-         try {
-
-             br = new BufferedReader(new FileReader(csvFile));
-             while ((line = br.readLine()) != null) {
-
-                //use comma as separator
-                 String[]username = line.split(cvsSplitBy);
-
-                 if(source == this.newcompte) {
-                	 if(username[0].equals(this.username.getText())) {
-                		 Popup.createAndShowGUIPopup("Username déjà pris");
-                	 }
-                	 else {//On rajoute username
-                	 }	 
-                 }
-                 else if(source == this.connexion){
-                	 if(username[0].equals(this.username.getText())) {
-	                	 //On modifie le fichier et on ouvre l'interface de chat
-	                	 System.out.println("On se connecte");
-                	 }
-                	 else {
-                		 Popup.createAndShowGUIPopup("Username non reconnu");
-                	 }
-                 } 
-                 
-             }
-
-         } catch (FileNotFoundException e) {
-             e.printStackTrace();
-         } catch (IOException e) {
-             e.printStackTrace();
-         } finally {
-             if (br != null) {
-                 try {
-                     br.close();
-                 } catch (IOException e) {
-                     e.printStackTrace();
-                 }
-             }
-         }
+    	
     }
 
     /**
