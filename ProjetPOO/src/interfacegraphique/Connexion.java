@@ -13,8 +13,13 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
 
 import javax.swing.*;
+
+import reseau.ClientUDP;
 
 public class Connexion implements ActionListener {
     JFrame converterFrame;
@@ -23,7 +28,8 @@ public class Connexion implements ActionListener {
     JLabel UsernameLabel, TextLabel;
     JButton connexion;
     JButton newcompte;
-
+    ArrayList<String> LoginList=new ArrayList<>();
+    
     public Connexion() {
         //Create and set up the window.
         converterFrame = new JFrame("Clavarding - Connexion");
@@ -31,7 +37,7 @@ public class Connexion implements ActionListener {
         converterFrame.setSize(new Dimension(120, 40));
         converterFrame.setLocationRelativeTo(null);
         //Create and set up the panel.
-        converterPanel = new JPanel(new GridLayout(5, 1));
+        converterPanel = new JPanel(new GridLayout(4, 1));
 
         //Add the widgets.
         addWidgets();
@@ -55,28 +61,60 @@ public class Connexion implements ActionListener {
         username = new JTextField();
        
         connexion = new JButton("Connexion");
-        newcompte = new JButton("Nouveau Compte");
         
         UsernameLabel = new JLabel("<html><b>Veuillez rentrer un username</b></html>", SwingConstants.CENTER);
         TextLabel = new JLabel("<html><b>Bonjour, veuillez vous connectez</b></html>", SwingConstants.CENTER);
 
         //Listen to events from the Convert button.
         connexion.addActionListener(this);
-        newcompte.addActionListener(this);
 
         //Add the widgets to the container.
         converterPanel.add(TextLabel);
         converterPanel.add(UsernameLabel);
         converterPanel.add(username);
         converterPanel.add(connexion);
-        converterPanel.add(newcompte);
         
         UsernameLabel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
         TextLabel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
     }
 
     public void actionPerformed(ActionEvent event) {
-    	
+    	int utiliser=0;
+    	ArrayList<String> LoginList = new ArrayList<String>();
+
+    	ClientUDP client = new ClientUDP(username.getText(), LoginList); 
+    	Thread cli1 = new Thread(client);
+    	cli1.start();
+
+    	try { 
+    		Thread.sleep(3000); 
+    	} 
+    	catch (InterruptedException e) {
+    		e.printStackTrace(); 
+    	}
+    	System.out.println("Liste:"+LoginList);
+
+
+    	for(int j=0;j<LoginList.size();j+=3) {
+    		if(LoginList.get(j).equals(username.getText())) {
+    			utiliser=1;
+    			Popup popup=new Popup("Username déjà utiliser!");
+    		}
+    	}
+    	if(utiliser==0) {
+    		try {
+				Connected connected=new Connected(LoginList,username.getText());
+			} catch (UnknownHostException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    		converterFrame.dispose();
+    	}
+
+
     }
 
     /**
