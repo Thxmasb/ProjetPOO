@@ -11,6 +11,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
+import autre.User;
 import interfacegraphique.Connected;
 import interfacegraphique.Popup;
 import interfacegraphique.Connexion;
@@ -49,11 +50,11 @@ import interfacegraphique.Connexion;
 public class ClientUDP implements Runnable{
 	String message = "";
 	long sleepTime = 300;
-	public List<String> LoginList;
+	public List<User> ListUser;
 
-	public ClientUDP(String message, List<String> LoginList){
+	public ClientUDP(String message, List<User> ListUser){
 		this.message = message;
-		this.LoginList=LoginList;
+		this.ListUser=ListUser;
 	}
 
 	public void run(){
@@ -81,7 +82,7 @@ public class ClientUDP implements Runnable{
 			//Et on récupère la réponse du serveur
 			byte[] buffer2 = new byte[256];
 			DatagramPacket packet2 = new DatagramPacket(buffer2, buffer2.length, adresse, 1024);
-			client.setSoTimeout(1000);
+			client.setSoTimeout(500);
 			while(true) {
 				
 				try {
@@ -96,9 +97,8 @@ public class ClientUDP implements Runnable{
 				System.out.println(" Message:"+new String(packet2.getData()));
 				String receivemessage= new String(packet2.getData(), 0, packet2.getLength());
 						//new String(packet2.getData());
-				LoginList.add(receivemessage);
-				LoginList.add(packet2.getAddress().toString());
-				LoginList.add(String.valueOf(packet2.getPort()));
+				User user= new User(receivemessage, packet2.getAddress(),packet2.getPort());
+				ListUser.add(user);
 				try {
 					Thread.sleep(sleepTime);
 				} catch (InterruptedException e) {

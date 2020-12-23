@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import javax.swing.*;
 
 import reseau.ClientUDP;
+import autre.User;
 
 public class Connexion implements ActionListener {
     JFrame converterFrame;
@@ -80,9 +81,9 @@ public class Connexion implements ActionListener {
 
     public void actionPerformed(ActionEvent event) {
     	int utiliser=0;
-    	ArrayList<String> LoginList = new ArrayList<String>();
+    	ArrayList<User> UserList = new ArrayList<User>();
 
-    	ClientUDP client = new ClientUDP(username.getText(), LoginList); 
+    	ClientUDP client = new ClientUDP(username.getText(), UserList); 
     	Thread cli1 = new Thread(client);
     	cli1.start();
 
@@ -92,18 +93,18 @@ public class Connexion implements ActionListener {
     	catch (InterruptedException e) {
     		e.printStackTrace(); 
     	}
-    	System.out.println("Liste:"+LoginList);
+    	System.out.println("Liste:"+UserList);
 
 
-    	for(int j=0;j<LoginList.size();j+=3) {
-    		if(LoginList.get(j).equals(username.getText())) {
+    	for(int j=0;j<UserList.size();j++) {
+    		if(UserList.get(j).getUsername().equals(username.getText())) {
     			utiliser=1;
     			Popup popup=new Popup("Username déjà utiliser!");
     		}
     	}
     	if(utiliser==0) {
     		try {
-				Connected connected=new Connected(LoginList,username.getText());
+				Connected connected=new Connected(UserList,username.getText());
 			} catch (UnknownHostException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

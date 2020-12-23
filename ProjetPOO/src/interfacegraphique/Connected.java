@@ -14,23 +14,27 @@ import javax.swing.*;
 
 import reseau.ClientUDP;
 import reseau.ServerUDP;
+import autre.User;
 
 public class Connected implements ActionListener {
     JFrame Frame;
     JPanel Panel;
     JLabel Bienvenue;
-    ArrayList<String> Liste;
+    ArrayList<User> Liste;
     String username;
+    JList list;
+    DefaultListModel<String> DLM;
+    ServerUDP server;
 
-    public Connected(ArrayList<String> Liste, String username) throws UnknownHostException, IOException {
+    public Connected(ArrayList<User> Liste, String username) throws UnknownHostException, IOException {
     	this.Liste=Liste;
         //Create and set up the window.
         Frame = new JFrame("Clavarding - Connected");
-        Frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        //Frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         Frame.setSize(new Dimension(120, 40));
         Frame.setLocationRelativeTo(null);
         //Create and set up the panel.
-        Panel = new JPanel(new GridLayout(Liste.size()/3+2, 1));
+        Panel = new JPanel(new GridLayout(3, 1));
 
         //Add the widgets.
         addWidgets();
@@ -41,15 +45,44 @@ public class Connected implements ActionListener {
 
         //Display the window.
         Frame.pack();
+        
+        
+        
+        Frame.addWindowListener(new WindowAdapter() {
+        	 
+        	@Override
+        	 
+        	public void windowClosing(WindowEvent e) {
+        	 
+        		ClientUDP client = new ClientUDP("Deconnexion", Liste); 
+            	Thread cli1 = new Thread(client);
+            	cli1.start();
+            	System.exit(0);
+        	}
+        	 
+        	  });
+        
+        
+        
         Frame.setVisible(true);
         
-        
+        DLM=new DefaultListModel<String>();
+    	
+		for(int i=0;i<Liste.size();i++) { 
+			DLM.addElement(Liste.get(i).getUsername());
+		}
+		 
+    	list = new JList(DLM);
+    			Panel.add(list);
         //ServerUDP server = new ServerUDP(InetAddress.getLocalHost(),1024,username);
         //server.updateArrayList(Liste);
         
-        ServerUDP server = new ServerUDP(InetAddress.getLocalHost(),1024,username);
+        server = new ServerUDP(InetAddress.getLocalHost(),1024,username,Liste,DLM);
     	Thread serv = new Thread(server);
     	serv.start();
+    	
+    	
+    	
     }
 
     /**
@@ -74,6 +107,7 @@ public class Connected implements ActionListener {
     	changeUsername.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ev) {
                     Frame.dispose();
+                    server.dgramSocket.close();
                     new Connexion();
             }
         });
@@ -81,10 +115,10 @@ public class Connected implements ActionListener {
     	Bienvenue = new JLabel("<html><b>Bonjour, voici les utilisateurs connectés</b></html>", SwingConstants.CENTER);
     		   
     	Panel.add(Bienvenue);
-    	for(int i=0;i<Liste.size();i+=3) {
-         JButton j = new JButton(Liste.get(i));
-         Panel.add(j);
-    	}
+		
+    	
+    	
+    	
         
        
         Bienvenue.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
