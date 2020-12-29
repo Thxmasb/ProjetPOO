@@ -22,15 +22,12 @@ public class ClientTCP {
 		this.port=port;
 	}
 
-	public void SocketClientTCP() {
+	public void SocketClientTCP(String message) {
 
 	      final Scanner sc = new Scanner(System.in);//pour lire à partir du clavier
-	  
+		
 	      try {
-	         /*
-	         * les informations du serveur ( port et adresse IP ou nom d'hote
-	         * 127.0.0.1 est l'adresse local de la machine
-	         */
+
 	    	 Socket clientSocket = new Socket(host,port);
 	   
 	         //flux pour envoyer
@@ -76,9 +73,9 @@ public class ClientTCP {
 	      }
 	}
 	
-	public static void main(String[] args) throws IOException {
-		ClientTCP client=new ClientTCP(InetAddress.getLocalHost(),5000);
-		client.SocketClientTCP();
-	}
-
+	/*
+	 * public static void main(String[] args) throws IOException { ClientTCP
+	 * client=new ClientTCP(InetAddress.getLocalHost(),5000);
+	 * client.SocketClientTCP(); }
+	 */
 }

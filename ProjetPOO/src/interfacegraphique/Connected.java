@@ -12,8 +12,12 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
+import reseau.ClientTCP;
 import reseau.ClientUDP;
+import reseau.ServerTCP;
 import reseau.ServerUDP;
 import autre.User;
 
@@ -74,15 +78,34 @@ public class Connected implements ActionListener {
 		}
 		 
     	list = new JList(DLM);
-    			Panel.add(list);
-        //ServerUDP server = new ServerUDP(InetAddress.getLocalHost(),1024,username);
-        //server.updateArrayList(Liste);
-        
-        server = new ServerUDP(InetAddress.getLocalHost(),1024,username,Liste,DLM);
+    	Panel.add(list);
+    			
+    	MouseListener mouseListener = new MouseAdapter() {
+    		public void mouseClicked(MouseEvent e) {
+    			int index = list.locationToIndex(e.getPoint());
+    			
+    			new DiscutionWindow(Liste.get(index));
+    			
+    		}
+    	};
+    	list.addMouseListener(mouseListener);
+
+
+    	server = new ServerUDP(InetAddress.getLocalHost(),1024,username,Liste,DLM);
     	Thread serv = new Thread(server);
     	serv.start();
-    	
-    	
+
+
+		/*
+		 * Thread server = new Thread(new Runnable() {
+		 * 
+		 * public void run() { ServerTCP serverTCP = new ServerTCP(5000);
+		 * serverTCP.SocketServerTCP(); } });
+		 * 
+		 * server.start();
+		 */
+
+
     	
     }
 
@@ -109,6 +132,7 @@ public class Connected implements ActionListener {
             public void actionPerformed(ActionEvent ev) {
                     Frame.dispose();
                     server.dgramSocket.close();
+               
                     new Connexion();
             }
         });
@@ -128,7 +152,7 @@ public class Connected implements ActionListener {
     public void actionPerformed(ActionEvent event) {
     	
     	
-
+    	new Popup("coucou");
               
     }
 

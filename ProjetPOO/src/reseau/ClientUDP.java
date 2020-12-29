@@ -65,6 +65,9 @@ public class ClientUDP implements Runnable{
 
 				System.out.print("On a reçu une réponse de l'adresse : "+packet2.getAddress()+" par son port "+packet2.getPort());
 				System.out.println(" Message:"+new String(packet2.getData()));
+				
+				
+				
 				String receivemessage= new String(packet2.getData(), 0, packet2.getLength());
 						//new String(packet2.getData());
 				User user= new User(receivemessage, packet2.getAddress(),packet2.getPort());
