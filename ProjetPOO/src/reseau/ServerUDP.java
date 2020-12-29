@@ -21,6 +21,7 @@ public class ServerUDP implements Runnable {
 	public DatagramSocket dgramSocket;
 	ArrayList<User> ListUser;
 	DefaultListModel<String> DLM;
+	boolean running=true;
 	
 	public ServerUDP(InetAddress iplocal,int portlocal,String message, ArrayList<User> ListUser,DefaultListModel<String> DLM) throws IOException {
 		
@@ -30,6 +31,7 @@ public class ServerUDP implements Runnable {
 	
 		try{
 			this.dgramSocket = new DatagramSocket(portlocal);
+			//dgramSocket.setSoTimeout(500);
 		}catch (SocketException e){
 			System.out.println("On close");
 		}
@@ -40,36 +42,38 @@ public class ServerUDP implements Runnable {
 
 	@Override
 	public void run() {
-		while(true) {
+		while(running) {
 			byte[] buffer = new byte[256];
-			DatagramPacket inPacket = new DatagramPacket(buffer, buffer.length);
 			try {
+				DatagramPacket inPacket = new DatagramPacket(buffer, buffer.length);
 				dgramSocket.receive(inPacket);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+				ipdest = inPacket.getAddress();
+				portdest = inPacket.getPort();
 
-			ipdest = inPacket.getAddress();
-			portdest = inPacket.getPort();
-
-			messagerecu = new String(inPacket.getData(), 0, inPacket.getLength());
-			System.out.println("Message reçu:"+messagerecu);
-			
-			User user=new User(messagerecu,ipdest,portdest);
-			
-			if (!messagerecu.equals(message)) {
-				if(messagerecu.equals("Deconnexion")) {
-					deconnexion(user);
-				}else {
-					update(user);
+				messagerecu = new String(inPacket.getData(), 0, inPacket.getLength());
+				System.out.println("Message reçu:"+messagerecu);
+				
+				User user=new User(messagerecu,ipdest,portdest);
+				
+				if (!messagerecu.equals(message)) {
+					if(messagerecu.equals("Deconnexion")) {
+						deconnexion(user);
+					}else {
+						update(user);
+					}
 				}
+			} catch (IOException e) {
+				System.out.println("Exception de fermeture");
+				running=false;
 			}
 
-			DatagramPacket outPacket = new DatagramPacket(message.getBytes(), message.length(), ipdest, portdest);
-			try {
+
+
+			try{
+				DatagramPacket outPacket = new DatagramPacket(message.getBytes(), message.length(), ipdest, portdest);
 				dgramSocket.send(outPacket);
-			} catch (IOException e) {
-				e.printStackTrace();
+			} catch (IOException | IllegalArgumentException e) {
+				System.out.println("Exception");
 			}
 			System.out.println("Envoi du message:"+message);
 		}
