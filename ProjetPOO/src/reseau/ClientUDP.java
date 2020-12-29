@@ -16,36 +16,6 @@ import interfacegraphique.Connected;
 import interfacegraphique.Popup;
 import interfacegraphique.Connexion;
 
-/*
- * public class ClientUDP{
- * 
- * public InetAddress ipdest; public int portdest; public String message; public
- * String response; public InetAddress ipsource; public int portsource;
- * 
- * public ClientUDP(String message) throws IOException {
- * this.ipdest=InetAddress.getByName("255.255.255.255"); this.portdest=1024;
- * this.message=message;
- * 
- * System.out.println("Envoi du message:"+message+" à "+ipdest+" au port "
- * +portdest); DatagramSocket dgramSocket = new DatagramSocket();
- * 
- * 
- * DatagramPacket outPacket = new
- * DatagramPacket(message.getBytes(),message.length(),ipdest, portdest);
- * dgramSocket.send(outPacket);
- * 
- * byte[] buffer = new byte[256]; DatagramPacket inPacket = new
- * DatagramPacket(buffer, buffer.length); dgramSocket.receive(inPacket);
- * 
- * this.response = new String(inPacket.getData(), 0, inPacket.getLength());
- * this.ipsource=inPacket.getAddress(); this.portsource=inPacket.getPort();
- * System.out.println("Réponse:"+response+" de "+ipsource+" du port "+portsource
- * );
- * 
- * dgramSocket.setSoTimeout(3000); dgramSocket.close();
- * 
- * } }
- */
 
 public class ClientUDP implements Runnable{
 	String message = "";
