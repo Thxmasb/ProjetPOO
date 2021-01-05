@@ -19,6 +19,7 @@ import reseau.ClientTCP;
 import reseau.ClientUDP;
 import reseau.ServerTCP;
 import reseau.ServerUDP;
+import test.TCPS;
 import autre.User;
 
 public class Connected implements ActionListener {
@@ -95,15 +96,8 @@ public class Connected implements ActionListener {
     	Thread serv = new Thread(server);
     	serv.start();
 
-
-		/*
-		 * Thread server = new Thread(new Runnable() {
-		 * 
-		 * public void run() { ServerTCP serverTCP = new ServerTCP(5000);
-		 * serverTCP.SocketServerTCP(); } });
-		 * 
-		 * server.start();
-		 */
+    	TCPS tcp=new TCPS(Liste);
+   	    tcp.start();
 
 
     	
