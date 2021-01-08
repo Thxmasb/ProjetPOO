@@ -50,13 +50,9 @@ public class TCPC extends Thread{
 	}
 	
 	public void run() {
+
 		try {
 			this.output = new ObjectOutputStream(sockTCP.getOutputStream());
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		try {
 			this.input = new ObjectInputStream(sockTCP.getInputStream());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

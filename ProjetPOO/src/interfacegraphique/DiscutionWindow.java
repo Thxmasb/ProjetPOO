@@ -11,7 +11,11 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.sql.Date;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
@@ -23,11 +27,13 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import autre.User;
+import bdd.Bdd;
 import reseau.ClientTCP;
 import reseau.ClientUDP;
 import reseau.ServerTCP;
@@ -49,6 +55,7 @@ public class DiscutionWindow implements ActionListener {
     JTextField message;
     JButton envoyer;
     TCPC client;
+    DateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
     
 	public DiscutionWindow(User user, TCPC client) {
 		this.user=user;
@@ -94,10 +101,14 @@ public class DiscutionWindow implements ActionListener {
 
 				try {
 					while(true) {
-						System.out.println("On a recu : "+client.input.readUTF());
+						//System.out.println("On a recu : "+client.input.readUTF());
+						String message = client.input.readUTF();
+						System.out.println("On a recu : "+message);
+						printMessage(user.getUsername()+" : "+message+"\n");
 						
-						printMessage(client.input.readUTF());
+						Calendar calendar = Calendar.getInstance();
 						
+					    printMessage(format.format(calendar.getTime())+"\n\n");
 						//recevoir(input.readUTF());
 					}
 					
@@ -160,8 +171,15 @@ public class DiscutionWindow implements ActionListener {
 
 				try {
 					while(true) {
-						System.out.println("On a recu : "+client.input.readUTF());
-						printMessage(client.input.readUTF());
+						//System.out.println("On a recu : "+client.input.readUTF());
+						String message = client.input.readUTF();
+						System.out.println("On a recu : "+message);
+						printMessage(user.getUsername()+" : "+message+"\n");
+						
+						Calendar calendar = Calendar.getInstance();
+						
+					    printMessage(format.format(calendar.getTime())+"\n\n");
+						
 
 					}
 					
@@ -184,7 +202,12 @@ public class DiscutionWindow implements ActionListener {
     		   
     	messages = new JTextArea();
     	messages.setEditable(false);
-    	 
+    	
+    	JScrollPane scrollPane = new JScrollPane(
+                messages,                          //Le contenu du JScrollPane
+                JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,    //La barre verticale toujours visible
+                JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS); //La barre horizontale toujours visible
+        
     	message = new JTextField();
          
     	envoyer = new JButton("Envoyer");
@@ -192,7 +215,8 @@ public class DiscutionWindow implements ActionListener {
     	
         
     	Panel.add(Discussion);
-    	Panel.add(messages);
+    	//Panel.add(messages);
+        Panel.add(scrollPane, BorderLayout.CENTER);
     	Panel.add(message);
     	Panel.add(envoyer);
 
@@ -208,7 +232,20 @@ public class DiscutionWindow implements ActionListener {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		messages.append(message.getText());
+    	printMessage("Vous : "+message.getText()+"\n");
+		
+		Calendar calendar = Calendar.getInstance();
+		
+	    printMessage(format.format(calendar.getTime())+"\n\n");
+	    
+	    try {
+			new Bdd("INSERT INTO history VALUES ("+InetAddress.getLocalHost()+","+user.getAddress()+","+message.getText()+","+format.format(calendar.getTime())+")","INSERT");
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+	    
+	    message.setText("");
 
               
     }
