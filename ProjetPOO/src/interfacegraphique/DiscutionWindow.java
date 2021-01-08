@@ -239,7 +239,7 @@ public class DiscutionWindow implements ActionListener {
 	    printMessage(format.format(calendar.getTime())+"\n\n");
 	    
 	    try {
-			new Bdd("INSERT INTO history VALUES ("+InetAddress.getLocalHost()+","+user.getAddress()+","+message.getText()+","+format.format(calendar.getTime())+")","INSERT");
+			new Bdd("INSERT INTO history VALUES (\'"+InetAddress.getLocalHost().toString()+"\',\'"+user.getAddress().toString()+"\',\'"+message.getText()+"\',\'"+format.format(calendar.getTime())+"\');","INSERT");
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -3,6 +3,8 @@ package bdd;
 import java.sql.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Bdd {
 
@@ -18,12 +20,12 @@ public class Bdd {
 	String sql;
 	Statement stmt = null;
 	String type;
+	ArrayList <ArrayList<String>> ResultList=new ArrayList<ArrayList<String>>();
 
 	public Bdd(String query,String type) {
 
 		this.query=query;
 		this.type=type;
-		ResultSet rs = null;
 
 		Connection conn = null;
 		
@@ -47,8 +49,9 @@ public class Bdd {
 			sql = query;
 			
 			if(type.equals("SELECT")) {
-				rs=display(sql);
-				rs.close();
+				ResultSet rs2 = stmt.executeQuery(sql);
+				ResultList=display(rs2);
+				rs2.close();
 				
 			}else if(type.equals("INSERT")) {
 				update(sql);
@@ -81,27 +84,35 @@ public class Bdd {
 	}//end main
 	
 	
-	public ResultSet display(String sql) throws SQLException {
-		
-		
-		ResultSet rs = stmt.executeQuery(sql);
+	public ArrayList<ArrayList<String>> display(ResultSet rs) throws SQLException {
 
+		ArrayList<String> Result= new ArrayList<String>();
 		//STEP 5: Extract data from result set
 		while(rs.next()){
 			//Retrieve by column name
+			Result.clear();
 			String ipsrc  = rs.getString("ipsrc");
+			Result.add(ipsrc);
 			String ipdest = rs.getString("ipdest");
+			Result.add(ipdest);
 			String message = rs.getString("message");
+			Result.add(message);
 			Timestamp dateheure = rs.getTimestamp("dateheure");
-
+			Result.add(dateheure.toString());
+			
+			ResultList.add(Result);
+			
+			
+			
 			//Display values
-			System.out.print("ipsrc: " + ipsrc);
-			System.out.print(", ipdest: " + ipdest);
-			System.out.print(", message: " + message);
-			System.out.println(", dateheure: " + dateheure);
+			/*
+			 * System.out.print("ipsrc: " + ipsrc); System.out.print(", ipdest: " + ipdest);
+			 * System.out.print(", message: " + message); System.out.println(", dateheure: "
+			 * + dateheure);
+			 */
 		}
-		
-		return rs;
+		System.out.println(ResultList);
+		return ResultList;
 	}
 
 	public void update(String sql) throws SQLException {
@@ -114,9 +125,8 @@ public class Bdd {
 	}
 	
 	
-	/*
-	 * public static void main(String[] args) { //new
-	 * Bdd("INSERT INTO history VALUES ('192.168.0.1','192.168.9.4', 'ntm2', '2021-01-08 15:57:01')"
-	 * ,"INSERT"); new Bdd("SELECT * FROM history","SELECT"); }
-	 */
+
+	public static void main(String[] args) { 
+		new Bdd("SELECT * FROM history","SELECT"); }
+	 
 }//end FirstExample
