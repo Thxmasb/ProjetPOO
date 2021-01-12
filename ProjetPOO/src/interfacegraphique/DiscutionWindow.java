@@ -56,6 +56,7 @@ public class DiscutionWindow implements ActionListener {
     JButton envoyer;
     TCPC client;
     DateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+    ArrayList <ArrayList<String>> HistoryResultList;
     
 	public DiscutionWindow(User user, TCPC client) {
 		this.user=user;
@@ -94,6 +95,17 @@ public class DiscutionWindow implements ActionListener {
         Frame.getRootPane().setDefaultButton(envoyer);
                 
         Frame.setVisible(true);
+        
+        String query;
+		try {
+			query = "SELECT * FROM HISTORY WHERE ipsrc="+InetAddress.getLocalHost().toString()+"OR ipsrc="+user.getAddress().toString()+"AND ipdest="+InetAddress.getLocalHost().toString()+"OR ipdest="+user.getAddress().toString();
+			Bdd AskHistorique = new Bdd(query,"SELECT");        
+	        HistoryResultList= AskHistorique.ResultList;
+		} catch (UnknownHostException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+        
         
         Thread recevoir = new Thread(new Runnable() {
 
@@ -165,6 +177,16 @@ public class DiscutionWindow implements ActionListener {
 			e1.printStackTrace();
 		}
 		
+        String query;
+		try {
+			query = "SELECT * FROM HISTORY WHERE ipsrc="+InetAddress.getLocalHost().toString()+"OR ipsrc="+user.getAddress().toString()+"AND ipdest="+InetAddress.getLocalHost().toString()+"OR ipdest="+user.getAddress().toString();
+			Bdd AskHistorique = new Bdd(query,"SELECT");        
+	        HistoryResultList= AskHistorique.ResultList;
+		} catch (UnknownHostException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
 		Thread recevoir = new Thread(new Runnable() {
 
 			public void run() {
@@ -221,6 +243,21 @@ public class DiscutionWindow implements ActionListener {
     	Panel.add(envoyer);
 
     	Discussion.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+    	
+    	for (ArrayList<String> h:HistoryResultList) {
+			try {
+				if(h.get(0).equals(InetAddress.getLocalHost().toString())) {
+					printMessage("Vous : "+h.get(2));
+					printMessage(h.get(3));
+				}else {
+					printMessage(user.getUsername()+" : "+h.get(2));
+					printMessage(h.get(3));
+				}
+			} catch (UnknownHostException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
     }
 
     public void actionPerformed(ActionEvent event) {

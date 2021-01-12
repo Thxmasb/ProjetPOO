@@ -20,7 +20,7 @@ public class Bdd {
 	String sql;
 	Statement stmt = null;
 	String type;
-	ArrayList <ArrayList<String>> ResultList=new ArrayList<ArrayList<String>>();
+	public ArrayList <ArrayList<String>> ResultList=new ArrayList<ArrayList<String>>();
 
 	public Bdd(String query,String type) {
 
