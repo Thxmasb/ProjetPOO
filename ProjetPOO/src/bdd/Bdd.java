@@ -20,6 +20,7 @@ public class Bdd {
 	String sql;
 	Statement stmt = null;
 	String type;
+	
 	public ArrayList <ArrayList<String>> ResultList=new ArrayList<ArrayList<String>>();
 
 	public Bdd(String query,String type) {
@@ -41,29 +42,36 @@ public class Bdd {
 			System.out.println("Creating statement...");
 			stmt = conn.createStatement();
 
-			System.out.println("Creating database...");
-			stmt = conn.createStatement();
-
-			String sql = "CREATE DATABASE bddpoo2020";
-			try{
-				stmt.executeUpdate(sql);
-				System.out.println("Database created successfully...");
-			}catch (SQLException e){
-				System.out.println("La base existe deja");
+			if(type.equals("CREATE")) {
+				System.out.println("Creating database...");
+				sql = "CREATE DATABASE bddpoo2020";
+				try{
+					stmt.executeUpdate(sql);
+					System.out.println("Database created successfully...");
+				}catch (SQLException e){
+					System.out.println("La base existe deja");
+				}
+				
+				sql = "USE bddpoo2020";
+	
+				ResultSet rs1 = stmt.executeQuery(sql);
+				
+				sql = "CREATE TABLE `history` ( `ipsrc` VARCHAR(200) NOT NULL , `ipdest` VARCHAR(200) NOT NULL , `message` VARCHAR(15000) NOT NULL , `dateheure` VARCHAR(30) NOT NULL )";
+				try{
+					stmt.executeUpdate(sql);
+					System.out.println("On a bien crée la table history");
+				}catch (SQLException e){
+					//e.printStackTrace();
+					System.out.println("La table existe deja");
+				}
+			
+			} else {
+				sql = "USE bddpoo2020";
+				
+				ResultSet rs1 = stmt.executeQuery(sql);
 			}
 			
-			sql = "USE bddpoo2020";
-
-			ResultSet rs1 = stmt.executeQuery(sql);
 			
-			sql = "CREATE TABLE `history` ( `ipsrc` VARCHAR(200) NOT NULL , `ipdest` VARCHAR(200) NOT NULL , `message` VARCHAR(15000) NOT NULL , `dateheure` VARCHAR(30) NOT NULL )";
-			try{
-				stmt.executeUpdate(sql);
-				System.out.println("On a bien crée la table history");
-			}catch (SQLException e){
-				//e.printStackTrace();
-				System.out.println("La table existe deja");
-			}
 
 			
 			sql = query;

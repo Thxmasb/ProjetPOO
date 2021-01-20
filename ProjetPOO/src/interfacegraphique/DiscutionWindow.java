@@ -71,21 +71,36 @@ public class DiscutionWindow implements ActionListener {
         Panel = new JPanel(new GridLayout(4, 1));
 
 
-//        Thread hist = new Thread(new Runnable() {
-//
-//        	public void run() {
-//
-//
-//        		String query; 
-//        		try { query ="SELECT * FROM history WHERE ipsrc=\'"+InetAddress.getLocalHost().toString()+"\' OR ipsrc=\'"+user.getAddress().toString()+"\' AND ipdest=\'"+InetAddress.getLocalHost().toString()+"\' OR ipdest=\'"+user.getAddress().toString()+"\'"; Bdd AskHistorique = new Bdd(query,"SELECT"); 
-//        		HistoryResultList=AskHistorique.ResultList; 
-//        		} catch (UnknownHostException e1) { 
-//        			// TODO Auto-generated catch block 
-//        			e1.printStackTrace(); 
-//        		} 
-//        	} 
-//        });
-//        hist.start();
+        Thread hist = new Thread(new Runnable() {
+
+        	public void run() {
+
+
+        		String query; 
+        		try { 
+        			query ="SELECT * FROM history WHERE ipsrc=\'"+InetAddress.getLocalHost().toString()+"\' OR ipsrc=\'"+user.getAddress().toString()+"\' AND ipdest=\'"+InetAddress.getLocalHost().toString()+"\' OR ipdest=\'"+user.getAddress().toString()+"\'"; 
+        			Bdd AskHistorique = new Bdd(query,"SELECT"); 
+        			HistoryResultList=AskHistorique.ResultList; 
+        			
+        			for (ArrayList <String> S: HistoryResultList) {
+        				if(S.get(0).equals(InetAddress.getLocalHost().toString())){
+        					printMessage("Vous :");
+        					printMessage(S.get(2)+"\n");
+        					printMessage(S.get(3)+"\n"+"\n");
+        				}else {
+        					printMessage(user.getUsername()+" :");
+        					printMessage(S.get(2)+"\n");
+        					printMessage(S.get(3)+"\n"+"\n");
+        				}
+        			}
+        			
+        		} catch (UnknownHostException e1) { 
+        			// TODO Auto-generated catch block 
+        			e1.printStackTrace(); 
+        		} 
+        	} 
+        });
+        hist.start();
 
         
         //Add the widgets.
@@ -153,21 +168,36 @@ public class DiscutionWindow implements ActionListener {
         //Create and set up the panel.
         Panel = new JPanel(new GridLayout(4, 1));
 
-		/*
-		 * Thread hist = new Thread(new Runnable() {
-		 * 
-		 * public void run() {
-		 * 
-		 * 
-		 * String query; try { query
-		 * ="SELECT * FROM history WHERE ipsrc=\'"+InetAddress.getLocalHost().toString()
-		 * +"\' OR ipsrc=\'"+user.getAddress().toString()+"\' AND ipdest=\'"+InetAddress
-		 * .getLocalHost().toString()+"\' OR ipdest=\'"+user.getAddress().toString()+
-		 * "\'"; Bdd AskHistorique = new Bdd(query,"SELECT");
-		 * HistoryResultList=AskHistorique.ResultList; } catch (UnknownHostException e1)
-		 * { // TODO Auto-generated catch block e1.printStackTrace(); } } });
-		 * hist.start();
-		 */
+        Thread hist = new Thread(new Runnable() {
+
+        	public void run() {
+
+
+        		String query; 
+        		try { 
+        			query ="SELECT * FROM history WHERE ipsrc=\'"+InetAddress.getLocalHost().toString()+"\' OR ipsrc=\'"+user.getAddress().toString()+"\' AND ipdest=\'"+InetAddress.getLocalHost().toString()+"\' OR ipdest=\'"+user.getAddress().toString()+"\'"; 
+        			Bdd AskHistorique = new Bdd(query,"SELECT"); 
+        			HistoryResultList=AskHistorique.ResultList; 
+        			
+        			for (ArrayList <String> S: HistoryResultList) {
+        				if(S.get(0).equals(InetAddress.getLocalHost().toString())){
+        					printMessage("Vous :");
+        					printMessage(S.get(2)+"\n");
+        					printMessage(S.get(3)+"\n"+"\n");
+        				}else {
+        					printMessage(user.getUsername()+" :");
+        					printMessage(S.get(2)+"\n");
+        					printMessage(S.get(3)+"\n"+"\n");
+        				}
+        			}
+        			
+        		} catch (UnknownHostException e1) { 
+        			// TODO Auto-generated catch block 
+        			e1.printStackTrace(); 
+        		} 
+        	} 
+        });
+        hist.start();
         
         //Add the widgets.
         addWidgets();

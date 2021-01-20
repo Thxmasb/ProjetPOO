@@ -21,6 +21,7 @@ import reseau.ServerTCP;
 import reseau.ServerUDP;
 import test.TCPS;
 import autre.User;
+import bdd.Bdd;
 
 public class Connected implements ActionListener {
     JFrame Frame;
@@ -100,7 +101,7 @@ public class Connected implements ActionListener {
    	    tcp.start();
 
 
-    	
+    	new Bdd("","CREATE");
     }
 
     /**

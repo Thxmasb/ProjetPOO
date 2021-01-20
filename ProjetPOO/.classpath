@@ -6,17 +6,7 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/Users/thomasballotin/Downloads/ojdbc10.jar">
-		<attributes>
-			<attribute name="module" value="true"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="lib" path="/Users/thomasballotin/Downloads/mysql-connector-java-8.0.22/mysql-connector-java-8.0.22.jar">
-		<attributes>
-			<attribute name="module" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="/Users/thomasballotin/Downloads/jsch-0.1.55.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
