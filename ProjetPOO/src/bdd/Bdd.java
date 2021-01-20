@@ -10,11 +10,11 @@ public class Bdd {
 
 	// JDBC driver name and database URL
 	static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";  
-	static final String DB_URL = "jdbc:mysql://srv-bdens.insa-toulouse.fr";
+	static final String DB_URL = "jdbc:mysql://localhost";
 
 	//  Database credentials
-	static final String USER = "tp_servlet_007";
-	static final String PASS = "johQuoG7";
+	static final String USER = "root";
+	static final String PASS = "mariamaria";
 
 	String query;
 	String sql;
@@ -28,7 +28,7 @@ public class Bdd {
 		this.type=type;
 
 		Connection conn = null;
-		
+
 		try{
 			//STEP 2: Register JDBC driver
 			Class.forName("com.mysql.cj.jdbc.Driver");
@@ -40,24 +40,44 @@ public class Bdd {
 			//STEP 4: Execute a query
 			System.out.println("Creating statement...");
 			stmt = conn.createStatement();
+
+			System.out.println("Creating database...");
+			stmt = conn.createStatement();
+
+			String sql = "CREATE DATABASE bddpoo2020";
+			try{
+				stmt.executeUpdate(sql);
+				System.out.println("Database created successfully...");
+			}catch (SQLException e){
+				System.out.println("La base existe deja");
+			}
 			
-			
-			sql = "USE tp_servlet_007";
-			
+			sql = "USE bddpoo2020";
+
 			ResultSet rs1 = stmt.executeQuery(sql);
 			
-			sql = query;
+			sql = "CREATE TABLE `history` ( `ipsrc` VARCHAR(200) NOT NULL , `ipdest` VARCHAR(200) NOT NULL , `message` VARCHAR(15000) NOT NULL , `dateheure` VARCHAR(30) NOT NULL )";
+			try{
+				stmt.executeUpdate(sql);
+				System.out.println("On a bien crée la table history");
+			}catch (SQLException e){
+				//e.printStackTrace();
+				System.out.println("La table existe deja");
+			}
+
 			
+			sql = query;
+
 			if(type.equals("SELECT")) {
 				ResultSet rs2 = stmt.executeQuery(sql);
 				ResultList=display(rs2);
 				rs2.close();
-				
+
 			}else if(type.equals("INSERT")) {
 				update(sql);
 			}
 			//STEP 6: Clean-up environment
-			
+
 			stmt.close();
 			conn.close();
 		}catch(SQLException se){
@@ -82,36 +102,40 @@ public class Bdd {
 		}//end try
 		System.out.println("Goodbye!");
 	}//end main
-	
-	
+
+
 	public ArrayList<ArrayList<String>> display(ResultSet rs) throws SQLException {
 
-		ArrayList<String> Result= new ArrayList<String>();
+		
 		//STEP 5: Extract data from result set
 		while(rs.next()){
 			//Retrieve by column name
-			Result.clear();
-			String ipsrc  = rs.getString("ipsrc");
-			Result.add(ipsrc);
-			String ipdest = rs.getString("ipdest");
-			Result.add(ipdest);
-			String message = rs.getString("message");
-			Result.add(message);
-			Timestamp dateheure = rs.getTimestamp("dateheure");
-			Result.add(dateheure.toString());
 			
+			ArrayList<String> Result= new ArrayList<String>();
+			String ipsrc  = rs.getString("ipsrc");
+			String ipdest = rs.getString("ipdest");
+			String message = rs.getString("message");
+			String dateheure = rs.getString("dateheure");
+			
+
+			Result.add(ipsrc);
+			Result.add(ipdest);
+			Result.add(message);
+			Result.add(dateheure);			
+			System.out.println(Result);
 			ResultList.add(Result);
 			
-			
-			
+
 			//Display values
-			/*
-			 * System.out.print("ipsrc: " + ipsrc); System.out.print(", ipdest: " + ipdest);
-			 * System.out.print(", message: " + message); System.out.println(", dateheure: "
-			 * + dateheure);
-			 */
+			
+//			  System.out.print("ipsrc: " + ipsrc); System.out.print(", ipdest: " + ipdest);
+//			  System.out.print(", message: " + message); System.out.println(", dateheure: "
+//			  + dateheure);
+			  System.out.println(ResultList);
+			  
+			 
 		}
-		System.out.println(ResultList);
+		
 		return ResultList;
 	}
 
@@ -123,10 +147,13 @@ public class Bdd {
 		System.out.println("Ajout de "+sql);
 
 	}
-	
-	
+
+
+
+
 
 	public static void main(String[] args) { 
+		//new Bdd("INSERT INTO history VALUES ('NRTJFKN', 'cococ2kl', 'jkfghdng' ,'2021/01/18 16:54:15')","INSERT");
 		new Bdd("SELECT * FROM history","SELECT"); }
-	 
+
 }//end FirstExample

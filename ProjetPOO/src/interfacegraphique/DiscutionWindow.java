@@ -70,6 +70,24 @@ public class DiscutionWindow implements ActionListener {
         //Create and set up the panel.
         Panel = new JPanel(new GridLayout(4, 1));
 
+
+//        Thread hist = new Thread(new Runnable() {
+//
+//        	public void run() {
+//
+//
+//        		String query; 
+//        		try { query ="SELECT * FROM history WHERE ipsrc=\'"+InetAddress.getLocalHost().toString()+"\' OR ipsrc=\'"+user.getAddress().toString()+"\' AND ipdest=\'"+InetAddress.getLocalHost().toString()+"\' OR ipdest=\'"+user.getAddress().toString()+"\'"; Bdd AskHistorique = new Bdd(query,"SELECT"); 
+//        		HistoryResultList=AskHistorique.ResultList; 
+//        		} catch (UnknownHostException e1) { 
+//        			// TODO Auto-generated catch block 
+//        			e1.printStackTrace(); 
+//        		} 
+//        	} 
+//        });
+//        hist.start();
+
+        
         //Add the widgets.
         addWidgets();
 
@@ -96,17 +114,6 @@ public class DiscutionWindow implements ActionListener {
                 
         Frame.setVisible(true);
         
-        String query;
-		try {
-			query = "SELECT * FROM HISTORY WHERE ipsrc="+InetAddress.getLocalHost().toString()+"OR ipsrc="+user.getAddress().toString()+"AND ipdest="+InetAddress.getLocalHost().toString()+"OR ipdest="+user.getAddress().toString();
-			Bdd AskHistorique = new Bdd(query,"SELECT");        
-	        HistoryResultList= AskHistorique.ResultList;
-		} catch (UnknownHostException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-        
-        
         Thread recevoir = new Thread(new Runnable() {
 
 			public void run() {
@@ -122,6 +129,8 @@ public class DiscutionWindow implements ActionListener {
 						
 					    printMessage(format.format(calendar.getTime())+"\n\n");
 						//recevoir(input.readUTF());
+						new Bdd("INSERT INTO history VALUES (\'"+user.getAddress().toString()+"\',\'"+InetAddress.getLocalHost().toString()+"\',\'"+message+"\',\'"+format.format(calendar.getTime()).toString()+"\');","INSERT");
+
 					}
 					
 				} catch (IOException e) {
@@ -144,6 +153,22 @@ public class DiscutionWindow implements ActionListener {
         //Create and set up the panel.
         Panel = new JPanel(new GridLayout(4, 1));
 
+		/*
+		 * Thread hist = new Thread(new Runnable() {
+		 * 
+		 * public void run() {
+		 * 
+		 * 
+		 * String query; try { query
+		 * ="SELECT * FROM history WHERE ipsrc=\'"+InetAddress.getLocalHost().toString()
+		 * +"\' OR ipsrc=\'"+user.getAddress().toString()+"\' AND ipdest=\'"+InetAddress
+		 * .getLocalHost().toString()+"\' OR ipdest=\'"+user.getAddress().toString()+
+		 * "\'"; Bdd AskHistorique = new Bdd(query,"SELECT");
+		 * HistoryResultList=AskHistorique.ResultList; } catch (UnknownHostException e1)
+		 * { // TODO Auto-generated catch block e1.printStackTrace(); } } });
+		 * hist.start();
+		 */
+        
         //Add the widgets.
         addWidgets();
 
@@ -177,16 +202,6 @@ public class DiscutionWindow implements ActionListener {
 			e1.printStackTrace();
 		}
 		
-        String query;
-		try {
-			query = "SELECT * FROM HISTORY WHERE ipsrc="+InetAddress.getLocalHost().toString()+"OR ipsrc="+user.getAddress().toString()+"AND ipdest="+InetAddress.getLocalHost().toString()+"OR ipdest="+user.getAddress().toString();
-			Bdd AskHistorique = new Bdd(query,"SELECT");        
-	        HistoryResultList= AskHistorique.ResultList;
-		} catch (UnknownHostException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		
 		Thread recevoir = new Thread(new Runnable() {
 
 			public void run() {
@@ -201,7 +216,8 @@ public class DiscutionWindow implements ActionListener {
 						Calendar calendar = Calendar.getInstance();
 						
 					    printMessage(format.format(calendar.getTime())+"\n\n");
-						
+						new Bdd("INSERT INTO history VALUES (\'"+user.getAddress().toString()+"\',\'"+InetAddress.getLocalHost().toString()+"\',\'"+message+"\',\'"+format.format(calendar.getTime()).toString()+"\');","INSERT");
+
 
 					}
 					
@@ -244,20 +260,18 @@ public class DiscutionWindow implements ActionListener {
 
     	Discussion.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
     	
-    	for (ArrayList<String> h:HistoryResultList) {
-			try {
-				if(h.get(0).equals(InetAddress.getLocalHost().toString())) {
-					printMessage("Vous : "+h.get(2));
-					printMessage(h.get(3));
-				}else {
-					printMessage(user.getUsername()+" : "+h.get(2));
-					printMessage(h.get(3));
-				}
-			} catch (UnknownHostException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+		
+		/*
+		 * if (HistoryResultList!=null) {
+		 * System.out.println("PAS VIDEEEEEEEEEEEEEEEEEE"); for
+		 * (ArrayList<String>h:HistoryResultList) { try {
+		 * if(h.get(0).equals(InetAddress.getLocalHost().toString())) {
+		 * printMessage("Vous : "+h.get(2)); printMessage(h.get(3)); }else {
+		 * printMessage(user.getUsername()+" : "+h.get(2)); printMessage(h.get(3)); } }
+		 * catch (UnknownHostException e) { // TODO Auto-generated catch block
+		 * e.printStackTrace(); } } }
+		 */
+		 
     }
 
     public void actionPerformed(ActionEvent event) {
@@ -276,7 +290,7 @@ public class DiscutionWindow implements ActionListener {
 	    printMessage(format.format(calendar.getTime())+"\n\n");
 	    
 	    try {
-			new Bdd("INSERT INTO history VALUES (\'"+InetAddress.getLocalHost().toString()+"\',\'"+user.getAddress().toString()+"\',\'"+message.getText()+"\',\'"+format.format(calendar.getTime())+"\');","INSERT");
+			new Bdd("INSERT INTO history VALUES (\'"+InetAddress.getLocalHost().toString()+"\',\'"+user.getAddress().toString()+"\',\'"+message.getText()+"\',\'"+format.format(calendar.getTime()).toString()+"\');","INSERT");
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
