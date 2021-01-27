@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.EOFException;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
@@ -120,6 +121,12 @@ public class DiscutionWindow implements ActionListener {
         	public void windowClosing(WindowEvent e) {
         	 
         		//QUAND ON FERME ON CLOSE LA CONNEXION TCP
+        		try {
+					client.sockTCP.close();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
         	}
         	 
         	  });
@@ -136,16 +143,20 @@ public class DiscutionWindow implements ActionListener {
 				try {
 					while(true) {
 						//System.out.println("On a recu : "+client.input.readUTF());
-						String message = client.input.readUTF();
-						System.out.println("On a recu : "+message);
-						printMessage(user.getUsername()+" : "+message+"\n");
-						
-						Calendar calendar = Calendar.getInstance();
-						
-					    printMessage(format.format(calendar.getTime())+"\n\n");
-						//recevoir(input.readUTF());
-						new Bdd("INSERT INTO history VALUES (\'"+user.getAddress().toString()+"\',\'"+InetAddress.getLocalHost().toString()+"\',\'"+message+"\',\'"+format.format(calendar.getTime()).toString()+"\');","INSERT");
+						try {
+							String message = client.input.readUTF();
+							System.out.println("On a recu : "+message);
+							printMessage(user.getUsername()+" : "+message+"\n");
+							
+							Calendar calendar = Calendar.getInstance();
+							
+						    printMessage(format.format(calendar.getTime())+"\n\n");
+							new Bdd("INSERT INTO history VALUES (\'"+user.getAddress().toString()+"\',\'"+InetAddress.getLocalHost().toString()+"\',\'"+message+"\',\'"+format.format(calendar.getTime()).toString()+"\');","INSERT");
 
+							}catch (EOFException e) {
+								new PopupConnection("Le correspondant à quitter la conversation",user);
+								Frame.dispose();
+							}
 					}
 					
 				} catch (IOException e) {
@@ -216,6 +227,12 @@ public class DiscutionWindow implements ActionListener {
         	public void windowClosing(WindowEvent e) {
         	 
         		//QUAND ON FERME ON CLOSE LA CONNEXION TCP
+        		try {
+					client.sockTCP.close();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					System.out.println("Socket closed bye");
+				}
         	}
         	 
         	  });
@@ -239,6 +256,7 @@ public class DiscutionWindow implements ActionListener {
 				try {
 					while(true) {
 						//System.out.println("On a recu : "+client.input.readUTF());
+						try {
 						String message = client.input.readUTF();
 						System.out.println("On a recu : "+message);
 						printMessage(user.getUsername()+" : "+message+"\n");
@@ -247,6 +265,11 @@ public class DiscutionWindow implements ActionListener {
 						
 					    printMessage(format.format(calendar.getTime())+"\n\n");
 						new Bdd("INSERT INTO history VALUES (\'"+user.getAddress().toString()+"\',\'"+InetAddress.getLocalHost().toString()+"\',\'"+message+"\',\'"+format.format(calendar.getTime()).toString()+"\');","INSERT");
+
+						}catch (EOFException e) {
+							new PopupConnection("Le correspondant à quitter la conversation",user);
+							Frame.dispose();
+						}
 
 
 					}

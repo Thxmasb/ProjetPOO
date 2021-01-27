@@ -15,7 +15,7 @@ import java.net.Socket;
 
 public class TCPC extends Thread{
 
-	private Socket sockTCP;
+	public Socket sockTCP;
 	private ObjectOutputStream output;
 	public ObjectInputStream input;
 
