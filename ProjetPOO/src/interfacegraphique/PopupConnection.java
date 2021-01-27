@@ -59,13 +59,14 @@ public class PopupConnection implements ActionListener {
     private void addWidgets() {
         //Create widgets.
 
-        SeReconnecter = new JButton("SeReconnecter");
+        SeReconnecter = new JButton("Se reconnecter");
         Quitter = new JButton("Quitter");
 
         TextLabel = new JLabel("<html><b>"+this.texte+"</b></html>", SwingConstants.CENTER);
 
         //Listen to events from the Convert button.
         SeReconnecter.addActionListener(this);
+        Quitter.addActionListener(this);
 
         //Add the widgets to the container.
         converterPanel.add(TextLabel);

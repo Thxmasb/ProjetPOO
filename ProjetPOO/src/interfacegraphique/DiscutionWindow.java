@@ -11,6 +11,7 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.sql.Date;
 import java.text.DateFormat;
@@ -66,7 +67,7 @@ public class DiscutionWindow implements ActionListener {
 		//Create and set up the window.
         Frame = new JFrame("Clavarding with "+user.getUsername());
         //Frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        Frame.setSize(new Dimension(120, 40));
+        Frame.setSize(new Dimension(300, 200));
         Frame.setLocationRelativeTo(null);
         //Create and set up the panel.
         Panel = new JPanel(new GridLayout(4, 1));
@@ -139,9 +140,9 @@ public class DiscutionWindow implements ActionListener {
         Thread recevoir = new Thread(new Runnable() {
 
 			public void run() {
-
+				boolean b =true;
 				try {
-					while(true) {
+					while(b) {
 						//System.out.println("On a recu : "+client.input.readUTF());
 						try {
 							String message = client.input.readUTF();
@@ -154,9 +155,14 @@ public class DiscutionWindow implements ActionListener {
 							new Bdd("INSERT INTO history VALUES (\'"+user.getAddress().toString()+"\',\'"+InetAddress.getLocalHost().toString()+"\',\'"+message+"\',\'"+format.format(calendar.getTime()).toString()+"\');","INSERT");
 
 							}catch (EOFException e) {
+								b=false;
 								new PopupConnection("Le correspondant à quitter la conversation",user);
 								Frame.dispose();
+							}catch(SocketException i) {
+								b=false;
+								System.out.println("Connexion closed");
 							}
+
 					}
 					
 				} catch (IOException e) {
@@ -174,7 +180,7 @@ public class DiscutionWindow implements ActionListener {
 		//Create and set up the window.
         Frame = new JFrame("Clavarding with "+user.getUsername());
         //Frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        Frame.setSize(new Dimension(120, 40));
+        Frame.setSize(new Dimension(300, 200));
         Frame.setLocationRelativeTo(null);
         //Create and set up the panel.
         Panel = new JPanel(new GridLayout(4, 1));
@@ -252,24 +258,28 @@ public class DiscutionWindow implements ActionListener {
 		Thread recevoir = new Thread(new Runnable() {
 
 			public void run() {
-
+				boolean b =true;
 				try {
-					while(true) {
+					while(b) {
 						//System.out.println("On a recu : "+client.input.readUTF());
 						try {
-						String message = client.input.readUTF();
-						System.out.println("On a recu : "+message);
-						printMessage(user.getUsername()+" : "+message+"\n");
-						
-						Calendar calendar = Calendar.getInstance();
-						
-					    printMessage(format.format(calendar.getTime())+"\n\n");
-						new Bdd("INSERT INTO history VALUES (\'"+user.getAddress().toString()+"\',\'"+InetAddress.getLocalHost().toString()+"\',\'"+message+"\',\'"+format.format(calendar.getTime()).toString()+"\');","INSERT");
+							String message = client.input.readUTF();
+							System.out.println("On a recu : "+message);
+							printMessage(user.getUsername()+" : "+message+"\n");
+							
+							Calendar calendar = Calendar.getInstance();
+							
+						    printMessage(format.format(calendar.getTime())+"\n\n");
+							new Bdd("INSERT INTO history VALUES (\'"+user.getAddress().toString()+"\',\'"+InetAddress.getLocalHost().toString()+"\',\'"+message+"\',\'"+format.format(calendar.getTime()).toString()+"\');","INSERT");
 
-						}catch (EOFException e) {
-							new PopupConnection("Le correspondant à quitter la conversation",user);
-							Frame.dispose();
-						}
+							}catch (EOFException e) {
+								b=false;
+								new PopupConnection("Le correspondant a quitter la conversation",user);
+								Frame.dispose();
+							}catch(SocketException i) {
+								b=false;
+								System.out.println("Connexion closed");
+							}
 
 
 					}
