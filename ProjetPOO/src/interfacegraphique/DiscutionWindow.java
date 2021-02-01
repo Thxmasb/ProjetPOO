@@ -2,6 +2,8 @@ package interfacegraphique;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -59,6 +61,7 @@ public class DiscutionWindow implements ActionListener {
     TCPC client;
     DateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
     ArrayList <ArrayList<String>> HistoryResultList;
+    GridBagConstraints c;
     
 	public DiscutionWindow(User user, TCPC client) {
 		this.user=user;
@@ -67,10 +70,11 @@ public class DiscutionWindow implements ActionListener {
 		//Create and set up the window.
         Frame = new JFrame("Clavarding with "+user.getUsername());
         //Frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        Frame.setSize(new Dimension(300, 200));
+        //Frame.setSize(new Dimension(300, 200));
         Frame.setLocationRelativeTo(null);
         //Create and set up the panel.
-        Panel = new JPanel(new GridLayout(4, 1));
+        Panel.setLayout(new GridBagLayout());
+    	c = new GridBagConstraints();
 
 
         Thread hist = new Thread(new Runnable() {
@@ -180,10 +184,12 @@ public class DiscutionWindow implements ActionListener {
 		//Create and set up the window.
         Frame = new JFrame("Clavarding with "+user.getUsername());
         //Frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        Frame.setSize(new Dimension(300, 200));
+        //Frame.setSize(new Dimension(300, 200));
         Frame.setLocationRelativeTo(null);
         //Create and set up the panel.
-        Panel = new JPanel(new GridLayout(4, 1));
+        Panel = new JPanel();
+        Panel.setLayout(new GridBagLayout());
+    	c = new GridBagConstraints();
 
         Thread hist = new Thread(new Runnable() {
 
@@ -300,7 +306,13 @@ public class DiscutionWindow implements ActionListener {
 
     	
     	JLabel Discussion = new JLabel("<html><b>Discussion avec "+user.getUsername()+"</b></html>", SwingConstants.CENTER);
-    		   
+    	c.fill = GridBagConstraints.HORIZONTAL;
+    	c.weightx = 1;
+    	c.gridx = 0;
+    	c.gridy = 0;
+    	c.gridwidth = 2;
+    	Panel.add(Discussion, c);
+    	
     	messages = new JTextArea();
     	messages.setEditable(false);
     	
@@ -308,18 +320,38 @@ public class DiscutionWindow implements ActionListener {
                 messages,                          //Le contenu du JScrollPane
                 JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,    //La barre verticale toujours visible
                 JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS); //La barre horizontale toujours visible
-        
+    	c.ipady = 500;      //make this component tall
+    	c.ipadx = 300;
+    	c.weightx = 0.0;
+    	c.gridwidth = 2;
+    	c.weightx = 0;
+    	c.gridx = 0;
+    	c.gridy = 1;
+    	Panel.add(scrollPane, c);
+    	
     	message = new JTextField();
-         
+    	c.gridwidth = 1;
+    	c.ipady = 100;      //make this component tall
+    	c.ipadx = 250;
+    	c.weightx = 0;
+    	c.gridx = 0;
+    	c.gridy = 2;
+    	Panel.add(message, c);
+    	
     	envoyer = new JButton("Envoyer");
     	envoyer.addActionListener(this);
-    	
+    	c.ipady = 100;      //make this component tall
+    	c.ipadx = 50;
+    	c.weightx = 1;
+    	c.gridx = 1;
+    	c.gridy = 2;
+    	Panel.add(envoyer, c);
         
-    	Panel.add(Discussion);
+    	//Panel.add(Discussion);
     	//Panel.add(messages);
-        Panel.add(scrollPane, BorderLayout.CENTER);
-    	Panel.add(message);
-    	Panel.add(envoyer);
+        //Panel.add(scrollPane, BorderLayout.CENTER);
+    	//Panel.add(message);
+    	//Panel.add(envoyer);
 
     	Discussion.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
     	
