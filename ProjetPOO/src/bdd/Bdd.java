@@ -1,10 +1,8 @@
 package bdd;
 
 import java.sql.*;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.ResourceBundle;
 
 public class Bdd {
 
@@ -12,15 +10,18 @@ public class Bdd {
 	static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";  
 	static final String DB_URL = "jdbc:mysql://localhost";
 
-	//  Database credentials
-	static final String USER = "root";
-	static final String PASS = "mariamaria";
+	//Database credentials
+	//Please refer to the configuration file "config.properties" to modify the credentials depending on your computer
+	static ResourceBundle bundle = ResourceBundle.getBundle("domaine.properties.config");
+	static final String USER = bundle.getString("sgdb.login");
+	static final String PASS = bundle.getString("sgdb.password");
 
 	String query;
 	String sql;
 	Statement stmt = null;
 	String type;
 	
+	//List where the data are stored when there are selected in the database
 	public ArrayList <ArrayList<String>> ResultList=new ArrayList<ArrayList<String>>();
 
 	public Bdd(String query,String type) {
@@ -31,17 +32,18 @@ public class Bdd {
 		Connection conn = null;
 
 		try{
-			//STEP 2: Register JDBC driver
+			//Register JDBC driver
 			Class.forName("com.mysql.cj.jdbc.Driver");
 
-			//STEP 3: Open a connection
+			//Open a connection
 			System.out.println("Connecting to database...");
 			conn = DriverManager.getConnection(DB_URL,USER,PASS);
 
-			//STEP 4: Execute a query
+			//Create a statement
 			System.out.println("Creating statement...");
 			stmt = conn.createStatement();
-
+			
+			//If the database of our chat system does not exist, we create it locally on the computer.
 			if(type.equals("CREATE")) {
 				System.out.println("Creating database...");
 				sql = "CREATE DATABASE bddpoo2020";
@@ -52,10 +54,11 @@ public class Bdd {
 					System.out.println("La base existe deja");
 				}
 				
+				//Choice of the database to use
 				sql = "USE bddpoo2020";
-	
-				ResultSet rs1 = stmt.executeQuery(sql);
+				stmt.executeQuery(sql);
 				
+				//We create the history table if it doesn't exist.
 				sql = "CREATE TABLE `history` ( `ipsrc` VARCHAR(200) NOT NULL , `ipdest` VARCHAR(200) NOT NULL , `message` VARCHAR(15000) NOT NULL , `dateheure` VARCHAR(30) NOT NULL )";
 				try{
 					stmt.executeUpdate(sql);
@@ -68,7 +71,7 @@ public class Bdd {
 			} else {
 				sql = "USE bddpoo2020";
 				
-				ResultSet rs1 = stmt.executeQuery(sql);
+				stmt.executeQuery(sql);
 			}
 			
 			
@@ -76,16 +79,17 @@ public class Bdd {
 			
 			sql = query;
 
+			//If we make a selection in the database we use the function display and we store the result in the list ResultList
 			if(type.equals("SELECT")) {
 				ResultSet rs2 = stmt.executeQuery(sql);
 				ResultList=display(rs2);
 				rs2.close();
-
+			//Otherwise if we insert we use the function uodate 
 			}else if(type.equals("INSERT")) {
 				update(sql);
 			}
-			//STEP 6: Clean-up environment
-
+			
+			//Clean-up environment
 			stmt.close();
 			conn.close();
 		}catch(SQLException se){
@@ -95,7 +99,7 @@ public class Bdd {
 			//Handle errors for Class.forName
 			e.printStackTrace();
 		}finally{
-			//finally block used to close resources
+			//Finally block used to close resources
 			try{
 				if(stmt!=null)
 					stmt.close();
@@ -115,10 +119,9 @@ public class Bdd {
 	public ArrayList<ArrayList<String>> display(ResultSet rs) throws SQLException {
 
 		
-		//STEP 5: Extract data from result set
+		//Extract data from result set
 		while(rs.next()){
-			//Retrieve by column name
-			
+			//Retrieve by column name			
 			ArrayList<String> Result= new ArrayList<String>();
 			String ipsrc  = rs.getString("ipsrc");
 			String ipdest = rs.getString("ipdest");
@@ -130,7 +133,7 @@ public class Bdd {
 			Result.add(ipdest);
 			Result.add(message);
 			Result.add(dateheure);			
-			System.out.println(Result);
+			//System.out.println(Result);
 			ResultList.add(Result);
 			
 
@@ -139,7 +142,7 @@ public class Bdd {
 //			  System.out.print("ipsrc: " + ipsrc); System.out.print(", ipdest: " + ipdest);
 //			  System.out.print(", message: " + message); System.out.println(", dateheure: "
 //			  + dateheure);
-			  System.out.println(ResultList);
+			  //System.out.println(ResultList);
 			  
 			 
 		}
@@ -148,11 +151,8 @@ public class Bdd {
 	}
 
 	public void update(String sql) throws SQLException {
-
-
 		stmt.executeUpdate(sql);
-
-		System.out.println("Ajout de "+sql);
+		System.out.println("Adding: "+sql);
 
 	}
 
