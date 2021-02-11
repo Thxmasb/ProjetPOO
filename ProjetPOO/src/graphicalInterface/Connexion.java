@@ -1,19 +1,9 @@
 
 package graphicalInterface;
 
-/**
- * CelsiusConverter.java is a 1.4 application that 
- * demonstrates the use of JButton, JTextField and
- * JLabel.  It requires no other files.
- */
-
 import java.awt.*;
 import java.awt.event.*;
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
@@ -113,17 +103,15 @@ public class Connexion implements ActionListener {
     	for(int j=0;j<UserList.size();j++) {
     		if(UserList.get(j).getUsername().equals(username.getText())) {
     			utiliser=1;
-    			Popup popup=new Popup("Username déjà utiliser!");
+    			new Popup("Username déjà utiliser!");
     		}
     	}
     	if(utiliser==0) {
     		try {
-				Connected connected=new Connected(UserList,username.getText(),newCo);
+				new Connected(UserList,username.getText(),newCo);
 			} catch (UnknownHostException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
     		Frame.dispose();

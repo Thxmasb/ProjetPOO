@@ -2,18 +2,12 @@ package graphicalInterface;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.net.InetAddress;
-import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import bdd.Bdd;
 import networkTCP.TCPS;
@@ -21,13 +15,13 @@ import networkUDP.ClientUDP;
 import networkUDP.ServerUDP;
 import other.User;
 
-public class Connected implements ActionListener {
+public class Connected {
     JFrame Frame;
     JPanel Panel;
     JLabel Bienvenue;
     ArrayList<User> Liste;
     String username;
-    JList list;
+    JList<String> list;
     DefaultListModel<String> DLM;
     ServerUDP server;
 
@@ -77,7 +71,7 @@ public class Connected implements ActionListener {
 			DLM.addElement(Liste.get(i).getUsername());
 		}
 		 
-    	list = new JList(DLM);
+    	list = new JList<String>(DLM);
     	Panel.add(list);
     			
     	MouseListener mouseListener = new MouseAdapter() {
@@ -135,19 +129,7 @@ public class Connected implements ActionListener {
     	Bienvenue = new JLabel("<html><b>Bonjour, voici les utilisateurs connectés</b></html>", SwingConstants.CENTER);
     		   
     	Panel.add(Bienvenue);
-		
-    	
-    	
-    	
-        
        
         Bienvenue.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
-    }
-
-    public void actionPerformed(ActionEvent event) {
-    	
-    }
-
-
-    
+    }   
 }

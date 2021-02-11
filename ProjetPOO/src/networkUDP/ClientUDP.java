@@ -27,41 +27,39 @@ public class ClientUDP implements Runnable{
 		byte[] buffer = envoi.getBytes();
 
 		try {
-			//On initialise la connexion côté client
+			//We initialize the client side connection
 			@SuppressWarnings("resource")
 			DatagramSocket client = new DatagramSocket();
+			//Activate the broadcast mode 
 			client.setBroadcast(true);
 
-			//On crée notre datagramme
+			//We create our broadcast datagram on port 1024
 			InetAddress adresse = InetAddress.getByName("255.255.255.255");
 			DatagramPacket packet = new DatagramPacket(buffer, buffer.length, adresse, 1024);
 
-			//On lui affecte les données à envoyer
+			//It is assigned the data to be sent
 			packet.setData(buffer);
 
-			//On envoie au serveur
+			//We send to the server
 			client.send(packet);
-			System.out.println("On envoi "+message+" de "+InetAddress.getLocalHost()+" à "+adresse+" au port 1024" );
+			System.out.println("We send "+message+" from "+InetAddress.getLocalHost()+" to "+adresse+" by the port 1024" );
 
-			//Et on récupère la réponse du serveur
+			//Finally, we get the answer from the server
 			byte[] buffer2 = new byte[256];
 			DatagramPacket packet2 = new DatagramPacket(buffer2, buffer2.length, adresse, 1024);
 			client.setSoTimeout(500);
-			while(true) {
-				
+			while(true) {	
 				try {
 				client.receive(packet2);
 				}catch (SocketTimeoutException e) {
 					return;
 				}
 
-				System.out.print("On a reçu une réponse de l'adresse : "+packet2.getAddress()+" par son port "+packet2.getPort());
-				System.out.println(" Message:"+new String(packet2.getData()));
+				System.out.print("We received a response from : "+packet2.getAddress()+" by the port "+packet2.getPort());
+				System.out.println("Message: "+new String(packet2.getData()));
 				
-				
-				
+				//We decompose the answer to be able to create a user 
 				String receivemessage= new String(packet2.getData(), 0, packet2.getLength());
-						//new String(packet2.getData());
 				User user= new User(receivemessage, packet2.getAddress(),packet2.getPort());
 				ListUser.add(user);
 				try {
@@ -71,34 +69,13 @@ public class ClientUDP implements Runnable{
 				}
 				
 			}
-			//client.close();
-
-			
 		} catch (SocketException e) {
 			e.printStackTrace();
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
-		
-		
+		}		
 	}
-	
-
-	/*
-	 * public static void main(String[] args) throws IOException { List<String>
-	 * LoginList = new ArrayList<>();;
-	 * 
-	 * ClientUDP client = new ClientUDP("Tété", LoginList); Thread cli1 = new
-	 * Thread(client); cli1.start();
-	 * 
-	 * try { Thread.sleep(3000); } catch (InterruptedException e) { // TODO
-	 * Auto-generated catch block e.printStackTrace(); }
-	 * System.out.println("Liste:"+LoginList);
-	 * 
-	 * 
-	 * }
-	 */
 }   
 

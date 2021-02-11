@@ -1,11 +1,5 @@
 package graphicalInterface;
 
-/**
- * CelsiusConverter.java is a 1.4 application that 
- * demonstrates the use of JButton, JTextField and
- * JLabel.  It requires no other files.
- */
-
 import java.awt.*;
 import java.awt.event.*;
 

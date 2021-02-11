@@ -1,11 +1,5 @@
 package graphicalInterface;
 
-/**
- * CelsiusConverter.java is a 1.4 application that 
- * demonstrates the use of JButton, JTextField and
- * JLabel.  It requires no other files.
- */
-
 import java.awt.*;
 import java.awt.event.*;
 
@@ -14,8 +8,8 @@ import javax.swing.*;
 import other.User;
 
 public class PopupConnection implements ActionListener {
-    JFrame converterFrame;
-    JPanel converterPanel;
+    JFrame Frame;
+    JPanel Panel;
     JLabel TextLabel;
     JButton SeReconnecter;
     JButton Quitter;
@@ -27,26 +21,26 @@ public class PopupConnection implements ActionListener {
     	this.texte=texte;
     	this.user=user;
     	
-        converterFrame = new JFrame("Attention");
-        converterFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        converterFrame.setSize(new Dimension(120, 40));
-        converterFrame.setLocationRelativeTo(null);
+        Frame = new JFrame("Attention");
+        Frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        Frame.setSize(new Dimension(120, 40));
+        Frame.setLocationRelativeTo(null);
         
         //Create and set up the panel.
-        converterPanel = new JPanel(new GridLayout(3, 1));
+        Panel = new JPanel(new GridLayout(3, 1));
 
         //Add the widgets.
         addWidgets();
 
         //Set the default button.
-        converterFrame.getRootPane().setDefaultButton(Quitter);
+        Frame.getRootPane().setDefaultButton(Quitter);
 
         //Add the panel to the window.
-        converterFrame.getContentPane().add(converterPanel, BorderLayout.CENTER);
+        Frame.getContentPane().add(Panel, BorderLayout.CENTER);
 
         //Display the window.
-        converterFrame.pack();
-        converterFrame.setVisible(true);
+        Frame.pack();
+        Frame.setVisible(true);
     }
 
     /**
@@ -65,24 +59,24 @@ public class PopupConnection implements ActionListener {
         Quitter.addActionListener(this);
 
         //Add the widgets to the container.
-        converterPanel.add(TextLabel);
-        converterPanel.add(SeReconnecter);
-        converterPanel.add(Quitter);
+        Panel.add(TextLabel);
+        Panel.add(SeReconnecter);
+        Panel.add(Quitter);
         
         TextLabel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
     }
 
     public void actionPerformed(ActionEvent event) {
-    	converterFrame.dispose();
+    	Frame.dispose();
     	if (event.getSource() == SeReconnecter)
         {
-        	converterFrame.dispose();
+        	Frame.dispose();
         	new DiscutionWindow(user);
         }
         
         if (event.getSource() == Quitter)
         {
-        	converterFrame.dispose();
+        	Frame.dispose();
         }
     }
 

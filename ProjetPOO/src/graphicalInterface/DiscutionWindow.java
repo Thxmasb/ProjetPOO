@@ -1,10 +1,8 @@
 package graphicalInterface;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -12,10 +10,8 @@ import java.awt.event.WindowEvent;
 import java.io.EOFException;
 import java.io.IOException;
 import java.net.InetAddress;
-import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.sql.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -26,10 +22,6 @@ import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -38,7 +30,6 @@ import javax.swing.SwingConstants;
 
 import bdd.Bdd;
 import networkTCP.TCPC;
-import networkUDP.ClientUDP;
 import networkUDP.ServerUDP;
 import other.User;
 
@@ -47,10 +38,8 @@ public class DiscutionWindow implements ActionListener {
 	User user;
     JFrame Frame;
     JPanel Panel;
-  
     ArrayList<User> Liste;
     String username;
-    JList list;
     DefaultListModel<String> DLM;
     ServerUDP server;
     JTextArea messages ;
@@ -62,25 +51,29 @@ public class DiscutionWindow implements ActionListener {
     GridBagConstraints c;
     JLabel Discussion;
     
+    
+    //DiscutionWindow 
+    //It has two constructors, 
+    //both of which take into account the user with whom they want to communicate.
+
+    //But, the first constructor also gives in parameter the TCP client server 
+    //(when the server that listens in "Connected" must create a client because it has been asked for a connection).
+
+    //In case we press the user we want to talk to it is not necessary because we create the client by opening the chat window.
 	public DiscutionWindow(User user, TCPC client) {
 		this.user=user;
 		this.client=client;
 		Panel=new JPanel();
 		//Create and set up the window.
         Frame = new JFrame("Chat session");
-        //Frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        //Frame.setSize(new Dimension(300, 200));
-        //Frame.setLocationRelativeTo(null);
         //Create and set up the panel.
         Panel.setLayout(new GridBagLayout());
-    	c = new GridBagConstraints();
+    	//Create a grid bag constraint to dispose the widgets like we want
+        c = new GridBagConstraints();
 
-
+        //We create a new thread that will allow us to retrieve the history of messages when the window is opened. 
         Thread hist = new Thread(new Runnable() {
-
         	public void run() {
-
-
         		String query; 
         		try { 
         			query ="SELECT * FROM history WHERE ipsrc=\'"+InetAddress.getLocalHost().toString()+"\' OR ipsrc=\'"+user.getAddress().toString()+"\' AND ipdest=\'"+InetAddress.getLocalHost().toString()+"\' OR ipdest=\'"+user.getAddress().toString()+"\'"; 
@@ -105,48 +98,43 @@ public class DiscutionWindow implements ActionListener {
         		} 
         	} 
         });
+        //We start the thread
         hist.start();
 
         
         //Add the widgets.
         addWidgets();
 
-
         //Add the panel to the window.
         Frame.getContentPane().add(Panel, BorderLayout.CENTER);
 
         //Display the window.
         Frame.pack();
-        
+
+        //We choose what happens when the window is closed
         Frame.addWindowListener(new WindowAdapter() {
-        	 
-        	@Override
-        	 
         	public void windowClosing(WindowEvent e) {
-        	 
-        		//QUAND ON FERME ON CLOSE LA CONNEXION TCP
+        		//WHEN WE CLOSE WE CLOSE THE TCP CONNECTION
         		try {
-					client.sockTCP.close();
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+        			client.sockTCP.close();
+        		} catch (IOException e1) {
+        			e1.printStackTrace();
+        		}
         	}
-        	 
-        	  });
+
+        });
         
         //Set the default button.
         Frame.getRootPane().setDefaultButton(envoyer);
                 
         Frame.setVisible(true);
         
+        //We create a thread that allows us to receive messages via TCP.
         Thread recevoir = new Thread(new Runnable() {
-
 			public void run() {
 				boolean b =true;
 				try {
 					while(b) {
-						//System.out.println("On a recu : "+client.input.readUTF());
 						try {
 							String message = client.input.readUTF();
 							System.out.println("On a recu : "+message);
@@ -179,22 +167,15 @@ public class DiscutionWindow implements ActionListener {
 	
 	public DiscutionWindow(User user) {
 		this.user=user;
-		
 		//Create and set up the window.
         Frame = new JFrame("Chat session");
-        //Frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        //Frame.setSize(new Dimension(300, 200));
-        //Frame.setLocationRelativeTo(null);
         //Create and set up the panel.
         Panel = new JPanel();
         Panel.setLayout(new GridBagLayout());
     	c = new GridBagConstraints();
 
         Thread hist = new Thread(new Runnable() {
-
         	public void run() {
-
-
         		String query; 
         		try { 
         			query ="SELECT * FROM history WHERE ipsrc=\'"+InetAddress.getLocalHost().toString()+"\' OR ipsrc=\'"+user.getAddress().toString()+"\' AND ipdest=\'"+InetAddress.getLocalHost().toString()+"\' OR ipdest=\'"+user.getAddress().toString()+"\'"; 
@@ -224,7 +205,6 @@ public class DiscutionWindow implements ActionListener {
         //Add the widgets.
         addWidgets();
 
-
         //Add the panel to the window.
         Frame.getContentPane().add(Panel, BorderLayout.CENTER);
 
@@ -232,27 +212,21 @@ public class DiscutionWindow implements ActionListener {
         Frame.pack();
         
         Frame.addWindowListener(new WindowAdapter() {
-        	 
-        	@Override
-        	 
         	public void windowClosing(WindowEvent e) {
-        	 
-        		//QUAND ON FERME ON CLOSE LA CONNEXION TCP
         		try {
-					client.sockTCP.close();
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					System.out.println("Socket closed bye");
-				}
+        			client.sockTCP.close();
+        		} catch (IOException e1) {
+        			// TODO Auto-generated catch block
+        			System.out.println("Socket closed bye");
+        		}
         	}
-        	 
-        	  });
+
+        });
         
         //Set the default button.
         Frame.getRootPane().setDefaultButton(envoyer);
 
-        
-
+        //We create the TCP client
 		try {
 			client=new TCPC(user.getAddress());
 		} catch (IOException e1) {
@@ -261,12 +235,10 @@ public class DiscutionWindow implements ActionListener {
 		}
 		
 		Thread recevoir = new Thread(new Runnable() {
-
 			public void run() {
 				boolean b =true;
 				try {
 					while(b) {
-						//System.out.println("On a recu : "+client.input.readUTF());
 						try {
 							String message = client.input.readUTF();
 							System.out.println("On a recu : "+message);
@@ -285,8 +257,6 @@ public class DiscutionWindow implements ActionListener {
 								b=false;
 								System.out.println("Connexion closed");
 							}
-
-
 					}
 					
 				} catch (IOException e) {
@@ -314,9 +284,9 @@ public class DiscutionWindow implements ActionListener {
     	messages.setEditable(false);
     	
     	JScrollPane scrollPane = new JScrollPane(
-                messages,                          //Le contenu du JScrollPane
-                JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,    //La barre verticale toujours visible
-                JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS); //La barre horizontale toujours visible
+                messages,                          //The contents of the JScrollPane
+                JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,    //The vertical bar always visible
+                JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS); //The horizontal bar always visible
     	c.ipady = 500;      //make this component tall
     	c.ipadx = 300;
     	c.weightx = 0.0;
@@ -343,26 +313,10 @@ public class DiscutionWindow implements ActionListener {
     	c.gridx = 1;
     	c.gridy = 2;
     	Panel.add(envoyer, c);
-        
-    	//Panel.add(Discussion);
-    	//Panel.add(messages);
-        //Panel.add(scrollPane, BorderLayout.CENTER);
-    	//Panel.add(message);
-    	//Panel.add(envoyer);
 
     	Discussion.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
-    	
-		
-		/*
-		 * if (HistoryResultList!=null) {
-		 * System.out.println("PAS VIDEEEEEEEEEEEEEEEEEE"); for
-		 * (ArrayList<String>h:HistoryResultList) { try {
-		 * if(h.get(0).equals(InetAddress.getLocalHost().toString())) {
-		 * printMessage("Vous : "+h.get(2)); printMessage(h.get(3)); }else {
-		 * printMessage(user.getUsername()+" : "+h.get(2)); printMessage(h.get(3)); } }
-		 * catch (UnknownHostException e) { // TODO Auto-generated catch block
-		 * e.printStackTrace(); } } }
-		 */
+
+    	//We refresh the username in case you change your user name in the meantime.
 		Thread refreshName = new Thread(new Runnable() {
 
 			public void run() {
@@ -374,13 +328,13 @@ public class DiscutionWindow implements ActionListener {
 		refreshName.start();
     }
 
+	//When we press the send button we display it and we also add it to the database.
     public void actionPerformed(ActionEvent event) {
     	
     	System.out.println("Le message à envoyer est : " + message.getText());
     	try {
 			client.sendMessage(message.getText());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
     	printMessage("Vous : "+message.getText()+"\n");
@@ -392,35 +346,14 @@ public class DiscutionWindow implements ActionListener {
 	    try {
 			new Bdd("INSERT INTO history VALUES (\'"+InetAddress.getLocalHost().toString()+"\',\'"+user.getAddress().toString()+"\',\'"+message.getText()+"\',\'"+format.format(calendar.getTime()).toString()+"\');","INSERT");
 		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 
 	    
-	    message.setText("");
-
-              
+	    message.setText("");       
     }
     
     public void printMessage(String msg) {
     	messages.append(msg);
     }
-    /**
-     * Create the GUI and show it.  For thread safety,
-     * this method should be invoked from the
-     * event-dispatching thread.
-     * @throws UnknownHostException 
-     */
-	/*
-	 * private static void createAndShowGUI() throws UnknownHostException { //Make
-	 * sure we have nice window decorations.
-	 * JFrame.setDefaultLookAndFeelDecorated(true); DiscutionWindow discutionWindow
-	 * = new DiscutionWindow(new User("thotho",InetAddress.getLocalHost(),5000)); }
-	 * 
-	 * public static void main(String[] args) { //Schedule a job for the
-	 * event-dispatching thread: //creating and showing this application's GUI.
-	 * javax.swing.SwingUtilities.invokeLater(new Runnable() { public void run() {
-	 * try { createAndShowGUI(); } catch (UnknownHostException e) { // TODO
-	 * Auto-generated catch block e.printStackTrace(); } } }); }
-	 */
-	 
+
 }

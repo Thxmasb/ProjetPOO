@@ -17,7 +17,7 @@ public class ServerUDP implements Runnable {
 	InetAddress ipdest;
 	int portdest;
 	String message;
-	public String messagerecu;
+	public String receivedMessage;
 	public DatagramSocket dgramSocket;
 	ArrayList<User> ListUser;
 	DefaultListModel<String> DLM;
@@ -30,8 +30,8 @@ public class ServerUDP implements Runnable {
 		this.message=message;
 	
 		try{
+			//Construct a datagram socket and bind it to the local port
 			this.dgramSocket = new DatagramSocket(portlocal);
-			//dgramSocket.setSoTimeout(500);
 		}catch (SocketException e){
 			System.out.println("On close");
 		}
@@ -40,45 +40,47 @@ public class ServerUDP implements Runnable {
 	}
 	
 
-	@Override
 	public void run() {
 		while(running) {
 			byte[] buffer = new byte[256];
 			try {
+				//Datagram of the received message
 				DatagramPacket inPacket = new DatagramPacket(buffer, buffer.length);
 				dgramSocket.receive(inPacket);
 				ipdest = inPacket.getAddress();
 				portdest = inPacket.getPort();
-
-				messagerecu = new String(inPacket.getData(), 0, inPacket.getLength());
-				System.out.println("Message reçu:"+messagerecu);
+				receivedMessage = new String(inPacket.getData(), 0, inPacket.getLength());
+				System.out.println("Received Message :"+receivedMessage);
 				
-				User user=new User(messagerecu,ipdest,portdest);
+				//A new user is created by decomposing the information of the received datagram
+				User user=new User(receivedMessage,ipdest,portdest);
 				
-				if (!messagerecu.equals(message)) {
-					if(messagerecu.equals("Deconnexion")) {
+				//if the received message is equal to "Deconnexion" 
+				//we remove the user from the list of active ones otherwise we add it
+				if (!receivedMessage.equals(message)) {
+					if(receivedMessage.equals("Deconnexion")) {
 						deconnexion(user);
 					}else {
 						update(user);
 					}
 				}
 			} catch (IOException e) {
-				System.out.println("Exception de fermeture");
+				System.out.println("Closure Exception");
 				running=false;
 			}
 
-
-
 			try{
+				//we create a datagram to send our information to the other user
 				DatagramPacket outPacket = new DatagramPacket(message.getBytes(), message.length(), ipdest, portdest);
 				dgramSocket.send(outPacket);
 			} catch (IOException | IllegalArgumentException e) {
 				System.out.println("Exception");
 			}
-			System.out.println("Envoi du message:"+message);
+			System.out.println("Sending the message:"+message);
 		}
 	}
 	
+	//Function to refresh the list of active users
 	public void update(User user) {
 		boolean exist=false;
 		for(User u:ListUser) {
@@ -87,7 +89,7 @@ public class ServerUDP implements Runnable {
 				break;
 			}
 			if (u.getAddress().equals(user.getAddress())) {
-				System.out.println("On met à jour l'utilisateur qui a changer de user");
+				System.out.println("We update the user who has changed user");
 				DLM.removeElement(u.getUsername());
 				u.setUsername(user.getUsername());
 				DLM.addElement(user.getUsername());
@@ -96,19 +98,19 @@ public class ServerUDP implements Runnable {
 			}
 		}
 		if(!exist) {
-			System.out.println("On met à jour la liste");
+			System.out.println("We update the list");
 			ListUser.add(user);
 			DLM.addElement(user.getUsername());
 			System.out.println(ListUser);
 		}
 	}
 
+	//Function to delete a user who logs out
 	public void deconnexion(User user) {
 		for(User u:ListUser) {
 			if (u.getAddress().equals(user.getAddress())) {
-				System.out.println("On supprime l'utilisateur qui se déconnecte");
+				System.out.println("We delete the user who disconnects");
 				DLM.removeElement(u.getUsername());
-				//ListUser.remove(u);
 				System.out.println(ListUser);
 			}
 		}
