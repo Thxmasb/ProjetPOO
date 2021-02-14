@@ -8,6 +8,6 @@ Bonjour, veuillez trouver dans ce projet :
 
 3/ Notre rapport du projet. Le rapport inclus un manuel d'utilisation.
 
-3/ Une video montrant le fonctionnement du projet (.MOV). 
+4/ Une video montrant le fonctionnement du projet (.MOV). 
 
 Auteurs : Terani LUQUE et Thomas BALLOTIN
